@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>皮影王国 · 灵动工坊</title>
+    <style>
+        :root {
+            --paper-light: #d2c4a8; 
+            --paper-warm: #f7ede2;  
+            --wood-shelf: #e0d5c1;  /* 浅色木质戏箱 */
+            --frame-brown: #3e2723; 
+            --red-accent: #b71c1c;  
+        }
+
+        body {
+            margin: 0;
+            background: #f4f1ea; /* 整体改为浅米色背景 */
+            color: #3e2723;
+            font-family: "STKaiti", "KaiTi", serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        h1 { color: var(--frame-brown); margin: 20px 0; letter-spacing: 6px; }
+
+        .container { display: flex; gap: 30px; padding: 10px; align-items: flex-start; }
+
+        /* ===== 舞台：浅色明亮风格 ===== */
+        #stage {
+            width: 900px;
+            height: 500px;
+            background: radial-gradient(circle at center, 
+                /*rgba(255, 255, 255, 0.4) 0%, */
+        	rgba(210, 196, 168, 0.6) 70%, 
+        	rgba(165, 145, 115, 0.2) 100%
+            );
+            position: relative;
+            border: 10px solid var(--frame-brown);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+            /*background-image: url('https://www.transparenttextures.com/patterns/handmade-paper.png');*/
+        }
+
+        /* ===== 零件箱：高对比度明亮设计 ===== */
+        .toolbox {
+            width: 200px;
+            background: var(--wood-shelf); 
+            border: 1px solid #c9ba9f;
+            padding: 15px;
+            display: flex;
+            flex-direction: column; /* 改为单列，方便看清每一个 */
+            gap: 20px;
+            border-radius: 4px;
+            max-height: 470px;
+            overflow-y: auto;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        .toolbox h3 { 
+            color: var(--frame-brown); 
+            margin: 0 0 10px 0; 
+            font-size: 16px; 
+            text-align: center;
+            border-bottom: 1px solid #bcaaa4;
+            padding-bottom: 8px;
+        }
+
+        /* 零件在箱子里的状态 */
+        .draggable {
+            width: 120px; /* 箱子里更小一点 */
+            margin: 0 auto;
+            cursor: pointer;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+            transition: transform 0.2s ease;
+            user-select: none;
+            /* 增加白色半透明底色，确保透明素材在暗处也能看清 */
+            background: rgba(255, 255, 255, 0.6); 
+            padding: 5px;
+            border-radius: 4px;
+        }
+
+        .draggable:hover { transform: scale(1.1); background: #fff; }
+
+        /* 选中状态（舞台内） */
+        .selected { outline: 2px solid var(--red-accent); outline-offset: 4px; }
+
+        /* ===== 按钮与控件 ===== */
+        .controls { margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .btn {
+            padding: 10px 40px;
+            background: var(--red-accent);
+            color: #fff;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 2px;
+            box-shadow: 0 4px 0 #801313;
+        }
+        .btn:hover { background: #d32f2f; transform: translateY(-1px); }
+        .btn:active { transform: translateY(1px); box-shadow: 0 1px 0 #801313; }
+        
+        .tip { color: #8d6e63; font-size: 13px; }
+    </style>
+</head>
+<body>
+
+    <h1>皮影王国 · 创作工坊</h1>
+
+    <div class="container">
+        <div id="stage">
+            <img src="image/公园.jpeg"  id="bg-img" style="position:absolute; width:100%; height:100%; object-fit:cover; opacity:0.8; pointer-events:none;">
+        </div>
+
+        <div class="toolbox">
+            <h3>素材戏箱</h3>
+  	    <img src="image/宠物狗.png" class="draggable" alt="零件1">
+            <img src="image/风筝.png" class="draggable" alt="零件2">
+            <img src="image/狗2.png" class="draggable" alt="零件3">
+            <img src="image/滑板男孩.png" class="draggable" alt="零件4">
+            <img src="image/男生.png" class="draggable" alt="零件5">
+	    <img src="image/鸟1.png" class="draggable" alt="零件6">
+	    <img src="image/鸟2.png" class="draggable" alt="零件7">
+	    <img src="image/女生.png" class="draggable" alt="零件8">
+	    <img src="image/松鼠.png" class="draggable" alt="零件9">
+	    <img src="image/花盆.png" class="draggable" alt="零件10">
+	   <img src="image/花盆2.png" class="draggable" alt="零件11">
+	   <img src="image/猫咪.png" class="draggable" alt="零件12">
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn" onclick="saveArt()">定格画卷</button>
+        <div class="tip">💡 操作：拖动摆放 | 滚轮缩放 | 点击置顶图片</div>
+    </div>
+
+    <canvas id="export-canvas" style="display: none;"></canvas>
+
+    <script>
+        const stage = document.getElementById('stage');
+let activeElement = null;
+let isDragging = false;
+let startX, startY;
+let zIndexCounter = 100;
+
+document.addEventListener('mousedown', (e) => {
+    if (e.target.classList.contains('draggable')) {
+        document.querySelectorAll('.draggable').forEach(el => el.classList.remove('selected'));
+        activeElement = e.target;
+        activeElement.classList.add('selected');
+        activeElement.style.zIndex = ++zIndexCounter;
+
+        if (activeElement.parentNode.classList.contains('toolbox')) {
+            activeElement.style.position = 'absolute';
+            activeElement.style.width = '150px'; 
+            activeElement.style.background = 'transparent';
+            activeElement.style.padding = '0';
+            stage.appendChild(activeElement);
+            activeElement.style.left = '375px';
+            activeElement.style.top = '175px';
+        }
+
+        isDragging = true;
+        startX = e.clientX - activeElement.offsetLeft;
+        startY = e.clientY - activeElement.offsetTop;
+        e.preventDefault();
+    }
+});
+
+window.addEventListener('mousemove', (e) => {
+    if (isDragging && activeElement) {
+        requestAnimationFrame(() => {
+            if (!activeElement) return;
+            activeElement.style.left = (e.clientX - startX) + 'px';
+            activeElement.style.top = (e.clientY - startY) + 'px';
+        });
+    }
+});
+
+window.addEventListener('mouseup', () => { isDragging = false; });
+
+window.addEventListener('wheel', (e) => {
+    if (activeElement && activeElement.parentNode === stage) {
+        e.preventDefault();
+        let currentWidth = activeElement.offsetWidth;
+        let scaleFactor = e.deltaY > 0 ? 0.9 : 1.1;
+        let newWidth = currentWidth * scaleFactor;
+        if (newWidth > 30 && newWidth < 800) {
+            activeElement.style.width = newWidth + 'px';
+        }
+    }
+}, { passive: false });
+
+async function saveArt() {
+    const canvas = document.getElementById('export-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // 设置导出分辨率
+    canvas.width = stage.offsetWidth * 2;
+    canvas.height = stage.offsetHeight * 2;
+    
+    // 1. 绘制底色
+    ctx.fillStyle = "#fdfaf2";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const imgs = Array.from(stage.querySelectorAll('img'));
+    
+    for (let img of imgs) {
+        const tempImg = new Image();
+        // 关键修复：允许跨域请求，防止 Canvas 被“污染”
+        tempImg.crossOrigin = "anonymous"; 
+        tempImg.src = img.src;
+
+        await new Promise((resolve) => {
+            tempImg.onload = resolve;
+            tempImg.onerror = resolve; // 即使某张图加载失败也继续，防止卡死
+        });
+
+        // 计算坐标
+        const isBg = img.id === 'bg-img';
+        const x = isBg ? 0 : parseFloat(img.style.left || 0) * 2;
+        const y = isBg ? 0 : parseFloat(img.style.top || 0) * 2;
+        const w = (isBg ? stage.offsetWidth : img.offsetWidth) * 2;
+        const h = (isBg ? stage.offsetHeight : img.offsetHeight) * 2;
+
+        // 设置透明度（背景 0.8，零件 1.0）
+        ctx.globalAlpha = isBg ? 0.8 : 1.0;
+        ctx.drawImage(tempImg, x, y, w, h);
+    }
+
+    // 导出并下载
+    try {
+        const dataURL = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.download = '皮影王国作品_' + Date.now() + '.png';
+        link.href = dataURL;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    } catch (err) {
+        console.error("保存失败，通常是因为图片跨域限制。请尝试在服务器环境（如 GitHub Pages）运行。");
+        alert("保存失败：如果是本地双击打开的文件，浏览器出于安全考虑会限制保存。请尝试上传至 GitHub 或使用本地服务器运行。");
+    }
+}
+    </script>
+</body>
+</html>
