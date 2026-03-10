@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>作品弹幕示例</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #111;
+      color: white;
+    }
+    .stage {
+      height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      background: #222;
+    }
+    #danmaku-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 10;
+    }
+    .danmaku {
+      position: absolute;
+      background: rgba(0,0,0,0.6);
+      padding: 6px 12px;
+      border-radius: 20px;
+      animation: fly 5s linear forwards;
+    }
+    @keyframes fly {
+      from { transform: translateX(100%); opacity: 0; }
+      to   { transform: translateX(-120%); opacity: 1; }
+    }
+    .input-area {
+      display: flex;
+      gap: 8px;
+      padding: 12px;
+      background: #000;
+    }
+    input { flex: 1; padding: 6px; }
+  </style>
+</head>
+
+<body>
+
+<div id="danmaku-layer"></div>
+
+<div class="stage">这里是你的作品展示区</div>
+
+<div class="input-area" id="auth-section">
+  <div id="login-form">
+    <input id="emailInput" placeholder="邮箱登录">
+    <button onclick="login()">登录 / 注册</button>
+  </div>
+  <div id="welcome-msg" style="display: none;">
+    <span id="user-email"></span>，欢迎回来！
+    <button onclick="logout()" style="font-size: 12px; background: #444;">退出</button>
+  </div>
+</div>
+
+<div class="input-area">
+  <input id="nameInput" placeholder="昵称">
+  <input id="textInput" placeholder="弹幕内容">
+  <button onclick="sendDanmaku()">发送</button>
+</div>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'
+
+  const supabase = createClient(
+    'https://ehcalchhcqgjoogqdzri.supabase.co',
+    'sb_publishable_dZ-gF5N1daD19CJvGS7c9A_B0TAgYf3'
+  )
+
+  // 登录逻辑
+  window.login = async () => {
+    const email = document.getElementById('emailInput').value.trim()
+    if (!email) return alert('请输入邮箱')
+
+    const { error } = await supabase.auth.signInWithOtp({
+      email: email,
+      options: {
+        emailRedirectTo: 'http://127.0.0.1:5500/danmaku.html'
+      }
+    })
+
+    if (error) {
+      console.error(error)
+      alert('发送失败：' + error.message)
+    } else {
+      alert('验证邮件已发送，请检查邮箱（包括垃圾箱）！')
+    }
+  }
+
+  // 退出逻辑
+  window.logout = async () => {
+    await supabase.auth.signOut()
+    location.reload() 
+  }
+
+  // 状态监听
+  supabase.auth.onAuthStateChange((event, session) => {
+    const loginForm = document.getElementById('login-form')
+    const welcomeMsg = document.getElementById('welcome-msg')
+    const userEmailSpan = document.getElementById('user-email')
+
+    if (session) {
+      loginForm.style.display = 'none'
+      welcomeMsg.style.display = 'block'
+      userEmailSpan.innerText = session.user.email
+    } else {
+      loginForm.style.display = 'block'
+      welcomeMsg.style.display = 'none'
+    }
+  })
+
+  // 发送逻辑
+  window.sendDanmaku = async () => {
+    const name = document.getElementById('nameInput').value.trim()
+    const text = document.getElementById('textInput').value.trim()
+    
+    if (!name || !text) return alert('昵称和内容都要写哦')
+
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return alert('请先去邮箱点击链接登录')
+
+    const { error } = await supabase.from('danmaku').insert({
+      nickname: name,
+      content: text,
+      user_id: user.id
+    })
+    
+    if (error) {
+      alert('发送失败：' + error.message)
+    } else {
+      alert('弹幕发送成功！')
+      document.getElementById('textInput').value = ''
+    }
+  } // <-- 之前你漏了这个括号
+</script>
+</body>
+</html>

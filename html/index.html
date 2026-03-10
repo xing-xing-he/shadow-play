@@ -1,0 +1,429 @@
+<!DOCTYPE html> 
+<html lang="zh-CN"> 
+<head> 
+<meta charset="UTF-8" /> 
+<title>皮影王国计划</title>
+ <style>
+ :root { 
+   --bg-dark: #0b0b0b; 
+   --stage-red: #7a0000; 
+   --light-warm: #f5d6a1;
+   --fabric: rgba(255, 245, 220, 0.08); 
+} 
+
+body { 
+  margin: 0; 
+  font-family: "PingFang SC", "Microsoft YaHei", sans-serif; 
+  background: linear-gradient(#cfdfe8 0%, #e8dfcf 40%, #1a1a1a 100%); 
+  color: #3a2a1a; 
+  line-height: 1.9; 
+} 
+.text-shadow { 
+  text-shadow: 
+    0 0 2px rgba(255, 220, 160, 0.6), 
+    0 0 6px rgba(160, 80, 30, 0.35); 
+} 
+.carousel{ 
+position:relative; 
+  width:320px; 
+  height:440px;
+  margin:48px auto 60px; 
+} 
+.level-desc { 
+   max-width: 640px; 
+   margin: 16px auto 32px; 
+   font-size: 15px; 
+   line-height: 1.7; 
+   color: #bfa26a; /* 比浅黄更深，更易读 */ 
+   text-align: center; 
+} 
+
+.level-flow { 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  gap: 24px; 
+}
+
+.flow-item { 
+  width: 240px; 
+  text-align: center; 
+}
+.flow-item img {
+  width: 100%; 
+  height: 400px; 
+  object-fit: cover; 
+  border-radius: 14px; 
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.35); 
+}
+ .flow-item span { 
+   display: block; 
+   margin-top: 10px; 
+   font-size: 14px; 
+   color: #e6dcc0; 
+} 
+.flow-arrow { 
+  font-size: 52px; 
+  color: #7a5520; 
+  margin: 0 28px; 
+  text-shadow: 
+        0 1px 0 rgba(255, 240, 200, 0.25), 
+	0 6px 14px rgba(0, 0, 0, 0.35); 
+}
+
+ /* ===== 戏台开场 ===== */ 
+.hero { 
+position: relative; 
+text-align: center; 
+padding: 120px 20px 140px; 
+overflow: hidden;
+}
+ .hero::before { 
+content: ""; 
+position: absolute; 
+inset: 0; 
+background: 
+  radial-gradient(circle at center, rgba(255,200,120,.15), transparent 60%); 
+pointer-events: none; 
+}
+ .hero h1 { 
+font-size: 44px; 
+letter-spacing: 4px; 
+color: #6b3a1e; 
+text-shadow: 0 0 20px rgba(255,200,120,.4); 
+} 
+.carousel p, 
+.hero p { 
+margin-top: 24px; 
+color: #6b3f1f; 
+line-height:1.7; 
+font-size: 18px; 
+text-shadow: 0 0 1px rgba(255,240,200,.4); 
+} 
+.btn { 
+ margin-top: 48px; 
+ display: inline-block; 
+ padding: 14px 36px; 
+ border-radius: 40px; 
+ background: var(--stage-red);
+ color: #fff; text-decoration: none; 
+ font-size: 16px; 
+ box-shadow: 0 0 20px rgba(180,0,0,.4); 
+ transition: 
+   box-shadow 0.3s ease, 
+   transform 0.2s ease; 
+} 
+.btn:hover { 
+ animation: drumBeat 0.4s ease; 
+ box-shadow: 
+    0 0 25px rgba(200,0,0,.6), 
+    0 0 45px rgba(255,100,0,.3); 
+}
+ /* ===== 鼓点震动动画 ===== */ 
+@keyframes drumBeat { 
+  0% { transform: translateX(0); } 
+  20% { transform: translateX(-2px); } 
+  40% { transform: translateX(2px); } 
+  60% { transform: translateX(-1px); } 
+  80% { transform: translateX(1px); } 
+  100% { transform: translateX(0); } 
+} 
+.btn { 
+  transition: 
+     box-shadow 0.3s ease, transform 0.2s ease; 
+}
+ /* 悬停时 */ 
+.btn:hover { 
+  animation: drumBeat 0.4s ease; 
+  box-shadow: 
+    0 0 25px rgba(200,0,0,.6), 
+    0 0 45px rgba(255,100,0,.3); 
+}
+ /* ===== 幕布内容区 ===== */
+ .section { 
+max-width: 960px; 
+margin: 0 auto 80px; 
+padding: 60px 40px; 
+background: 
+  linear-gradient( 
+     rgba(245,235,220,0.92), 
+     rgba(235,225,205,0.92) 
+    ); 
+border-radius: 6px; 
+box-shadow: 
+   inset 0 8px 30px rgba(0,0,0,.18), 
+   0 10px 30px rgba(0,0,0,.15); 
+color: #2f2418;} 
+.section h2 { 
+font-size: 28px; 
+color: #6b3a1e; 
+margin-bottom: 24px; 
+border-left: 4px solid var(--stage-red); 
+padding-left: 12px; 
+text-shadow: 0 0 2px rgba(255,200,120,.6); 
+} 
+/* ===== 剪影图片 ===== */ 
+.showcase img { 
+width: 20%; 
+display:block; 
+margin: 32px auto; 
+border-radius: 4px;
+filter: 
+	brightness(.7) 
+	contrast(1.05) 
+	saturate(0.85); 
+} 
+.carousel img { 
+position: absolute; 
+inset: 0; 
+width: 100%; 
+height: 100%; 
+object-fit: contain; 
+opacity: 0; 
+transform: translateX(24px); /* 初始：从右侧轻微走入 */ 
+
+transition: 
+   opacity 1.2s ease, 
+   transform 1.2s cubic-bezier(.4,0,.2,1); 
+} 
+.carousel img.active { 
+opacity: 1; 
+transform: translateX(0); /* 走到舞台正中 */ 
+z-index: 2; 
+} 
+.carousel img.exit { 
+opacity: 0; 
+transform: translateX(-24px); /* 轻微向左退场 */ 
+} 
+.carousel::after { 
+content: ""; 
+position: absolute; 
+bottom: -22px; 
+left: 50%; 
+transform: translateX(-50%); 
+width: 70%; 
+height: 14px; 
+background: 
+  linear-gradient( 
+     to bottom, 
+     rgba(120,80,40,.55); 
+     rgba(60,30,10,.65) 
+); 
+border-radius:50%; 
+filter: blur(1px); 
+} 
+.carousel::before { 
+content: ""; 
+position: absolute; 
+bottom: -32px; 
+left: 50%; 
+transform: translateX(-50%); 
+width: 80%; 
+height: 16px; 
+background: rgba(0,0,0,.35); 
+filter: blur(14px); 
+}
+ /* ===== 戏台弹幕层 ===== */ 
+#danmu-layer { 
+position: absolute; 
+inset: 0; 
+overflow: hidden; 
+pointer-events: none; /* 不影响按钮点击 */
+ z-index: 10
+} 
+.danmu { 
+position: absolute; 
+right: 100%;
+white-space: nowrap; 
+font-size: 22px;
+font-weight:bold;
+letter-spacing: 2px; 
+color: rgba(255, 230, 180, 0.85); 
+text-shadow: 
+	2px 2px 4px rgba(0, 0, 0, 0.5),
+       0 0 10px rgba(255, 150, 0, 0.3); 
+  will-change: transform;
+}
+ /* 弹幕移动动画 */ 
+@keyframes danmuMove { 
+  from { transform: translateX(0); } 
+  to { transform: translateX(-150vw); } 
+} /* 补齐了这个括号 */
+ /* ===== 占位区（关卡用） ===== */ 
+.placeholder {
+  border: 1px dashed rgba(255,255,255,.2);
+  padding: 40px;
+  text-align: center;
+  color: #aaa;
+  font-style: italic;
+}
+
+/* ===== 页脚 ===== */
+footer {
+  text-align: center;
+  padding: 40px;
+  color: #777;
+  font-size: 14px;
+}
+
+.btn-workshop {
+    margin-top: 20px;
+    display: inline-block;
+    padding: 10px 30px;
+    border-radius: 4px; /* 方正一点，像个工具箱 */
+    background: #5d4037; /* 深咖啡木色 */
+    color: #f5e6c8; 
+    text-shadow: none;
+    text-decoration: none;
+    font-size: 16px;
+    border: 1px solid #3e2723;
+    transition: all 0.3s;
+}
+
+.btn-workshop:hover {
+    background: #795548;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    color: #fff;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- 戏台开场 -->
+<div class="hero">
+  <div id="danmu-layer"></div>
+  <h1 class="text-shadow">皮影王国计划</h1>
+  <p class="text-shadow">穿越异世界，用双手重建失落的皮影艺术</p>
+  <a class="btn" href="pingying game/game.html" target="_blank">锣鼓起 · 开戏</a>
+</div>
+
+<!-- 故事背景 -->
+<div class="section">
+  <h2>故事背景</h2>
+  <p>
+    我穿越了。<br>
+    当我睁开眼时，来到的是一个没有皮影的世界。<br>
+    幕布空空，灯光黯淡，故事无人再讲。<br><br>
+    直到系统绑定完成——<br>
+    我决定，从零开始，重建属于自己的皮影王国。
+  </p>
+</div>
+
+<!-- 操作体验 -->
+<div class="section">
+  <h2>你能做什么？</h2>
+  <p>
+    在游戏中，你将简要体验皮影的创作过程，<br>
+    通过实际操作完成表演任务，<br>
+    在一次次尝试中理解皮影艺术的结构与魅力。
+  </p>
+</div>
+
+<!-- 画面展示 -->
+<div class="section">
+  <h2>瞧一瞧皮影人物</h2>
+  <div class="carousel">
+    <img src="image/1花旦.png" alt="皮影角色1">
+    <img src="image/2文生.png" alt="皮影角色2">
+    <img src="image/3花旦.png" alt="皮影角色3">
+    <img src="image/4妖怪.png" alt="皮影角色4">
+    <img src="image/5净.png" alt="皮影角色5">
+    <img src="image/6小旦.png" alt="皮影角色6">
+    <img src="image/7妖怪.png" alt="皮影角色7">
+    
+  </div>
+</div>
+
+<!-- 关卡变化示意 -->
+<div class="section">
+  <h2>旅程尚未展开</h2>
+
+  <p class="level-desc">
+    在游戏的早期阶段，玩家将从一个简单朴素的小店开始。
+    随着经营行为与故事推进，店铺状态会逐渐发生变化，
+    最终打造出“经营王国”。
+  </p>
+
+  <div class="level-flow">
+    <div class="flow-item">
+      <img src="image/初始.jpeg" alt="初始状态">
+      <span>初始状态</span>
+    </div>
+
+    <div class="flow-arrow">→</div>
+
+    <div class="flow-item">
+      <img src="image/结尾.png" alt="结尾状态">
+      <span>结尾状态</span>
+    </div>
+  </div>
+</div>
+
+<!-- 行动入口 -->
+<div class="section" style="text-align:center">
+  <a class="btn" href="你的游戏链接" target="_blank">进入皮影世界</a>
+</div>
+<p style="margin-top: 40px; color: #6b3a1e; font-size: 14px;">想要亲手试试拼贴这些角色吗？</p>
+  <a class="btn-workshop" href="拼贴画.html">打开 · 灵动工坊</a>
+</div>
+<footer>
+  © 2026 皮影艺术 × 数字互动
+</footer>
+<script>
+  const images = document.querySelectorAll('.carousel img');
+  let index = 0;
+
+  images[index].classList.add('active');
+
+  setInterval(() => {
+    const current = images[index];
+    current.classList.remove('active');
+    current.classList.add('exit');
+
+    index = (index + 1) % images.length;
+    const next = images[index];
+    next.classList.remove('exit');
+    next.classList.add('active');
+
+    // 清理 exit 状态，避免叠加
+    setTimeout(() => {
+      current.classList.remove('exit');
+    }, 1200); // 与 transition 时间一致
+
+  }, 3000);
+
+ /* ===== 戏台弹幕系统 ===== */ 
+const danmuTexts = 
+[ "锣鼓声起——", "好一个花旦！", "灯火通明！", "王国即将重现", "妖怪登场！", "这一幕绝了", "掌声响起——", "皮影未灭", "再来一段！", "开戏开戏！" ]; 
+const layer = document.getElementById("danmu-layer"); 
+/* ✅ 加轨道系统，避免堆叠 */
+const tracks = 5;
+let trackIndex = 0;
+function createDanmu() { 
+const danmu = document.createElement("div"); 
+danmu.className = "danmu"; // 随机文本 
+danmu.innerText = danmuTexts[Math.floor(Math.random() * danmuTexts.length)]; // 随机高度（避免太密集） 
+/* 中央区域轨道分布 */
+  const startTop=10;
+  const gap = 15;
+  danmu.style.top = (startTop + trackIndex * gap) + "%";
+    trackIndex = (trackIndex + 1) % tracks;
+  const duration = Math.random() * 4+ 8;
+  danmu.style.animation = `danmuMove ${duration}s linear forwards`;
+
+  layer.appendChild(danmu);
+
+  setTimeout(() => {
+    danmu.remove();
+  }, duration * 1000);
+}
+createDanmu();
+setInterval(createDanmu, 2500);
+
+</script>
+
+</body>
+</html>
